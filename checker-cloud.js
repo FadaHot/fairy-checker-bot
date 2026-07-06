@@ -454,6 +454,31 @@ async function setupWebhook() {
   }
 }
 
+function selfKeepAlive() {
+  if (USE_WEBHOOK) return;
+  const selfUrl = process.env.RENDER_EXTERNAL_URL || process.env.SELF_URL;
+  if (!selfUrl) return;
+  const intervalMin = parseInt(process.env.KEEPALIVE_MINUTES || "10");
+  setInterval(async () => {
+    try {
+      const https = require("https");
+      const url = new URL(selfUrl);
+      const opts = { hostname: url.hostname, path: "/health", method: "GET", port: 443, timeout: 5000 };
+      const req = https.request(opts, (res) => {
+        console.log(`[keepalive] ping OK status=${res.statusCode}`);
+        res.on("data", () => {});
+        res.on("end", () => {});
+      });
+      req.on("error", (e) => console.warn(`[keepalive] falhou: ${e.message}`));
+      req.setTimeout(5000, () => { req.destroy(); });
+      req.end();
+    } catch (e) {
+      console.warn(`[keepalive] erro: ${e.message}`);
+    }
+  }, intervalMin * 60 * 1000);
+  console.log(`[keepalive] auto-ping a cada ${intervalMin} min em ${selfUrl}/health`);
+}
+
 async function main() {
   console.log("Checker-cloud iniciando...");
   console.log(`Modo: ${USE_WEBHOOK ? "webhook" : "polling"}`);
@@ -513,6 +538,8 @@ async function main() {
   } else {
     bot.launch();
   }
+
+  selfKeepAlive();
 
   console.log("Crons:");
   console.log("  - 08:00, 11:55, 15:55, 19:55: tarefas diarias");
