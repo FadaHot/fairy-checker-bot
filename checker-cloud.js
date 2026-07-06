@@ -544,6 +544,11 @@ async function main() {
           req.on("end", () => {
             try {
               const update = JSON.parse(body);
+              if (update.message) {
+                console.log(`[webhook] msg de ${update.message.from?.first_name || "?"}: ${(update.message.text || "").substring(0, 50)}`);
+              } else if (update.callback_query) {
+                console.log(`[webhook] callback de ${update.callback_query.from?.first_name || "?"}`);
+              }
               bot.handleUpdate(update);
               res.writeHead(200).end("ok");
             } catch (e) {
@@ -575,5 +580,5 @@ async function main() {
 
 main().catch((e) => { console.error("Erro fatal:", e); process.exit(1); });
 
-process.once("SIGINT", () => { server.close(); bot.stop("SIGINT"); });
-process.once("SIGTERM", () => { server.close(); bot.stop("SIGTERM"); });
+process.once("SIGINT", () => { server.close(); try { bot.stop("SIGINT"); } catch {} });
+process.once("SIGTERM", () => { server.close(); try { bot.stop("SIGTERM"); } catch {} });
