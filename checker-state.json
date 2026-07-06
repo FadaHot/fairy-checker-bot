@@ -1,11 +1,8 @@
 {
-  "modelos": [
-    "Elza Chan",
-    "Melyssa"
-  ],
+  "modelos": ["Elza Chan", "Melyssa"],
   "pessoas": {
     "Eduarda": {
-      "username_telegram": "@eduarda",
+      "username_telegram": "@Dudinha775",
       "tarefas_diarias": {
         "posts_instagram": {
           "label": "agendou os posts do Instagram (3 vídeos + 1 foto)",
@@ -22,7 +19,7 @@
       }
     },
     "Yan": {
-      "username_telegram": "@yan",
+      "username_telegram": "@MM4RI0",
       "tarefas_semanais": {
         "conteudo_mais18": {
           "label": "agendou semana +18 (Privacy + Telegram VIP)",
@@ -32,6 +29,17 @@
         },
         "youtube": {
           "label": "agendar YouTube (Elza + Melyssa)",
+          "coberto_ate": null,
+          "ultimo_status": null,
+          "ultimo_check": null
+        }
+      }
+    },
+    "Kaori": {
+      "username_telegram": "@KaoriFox",
+      "tarefas_diarias": {
+        "chatter_diurno": {
+          "label": "cobriu o chatter diurno (leads + vendas)",
           "coberto_ate": null,
           "ultimo_status": null,
           "ultimo_check": null
