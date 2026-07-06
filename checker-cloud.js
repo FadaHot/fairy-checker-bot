@@ -561,12 +561,6 @@ async function main() {
           });
           return;
         }
-              console.error("Erro processando update:", e.message);
-              res.writeHead(400).end("bad request");
-            }
-          });
-          return;
-        }
         res.writeHead(404).end("not found");
       });
       console.log("Webhook handler registrado no servidor HTTP.");
