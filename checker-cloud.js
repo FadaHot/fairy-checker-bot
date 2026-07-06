@@ -448,6 +448,7 @@ const server = http.createServer((req, res) => {
   const ts = new Date().toISOString();
 
   if (req.url === "/health" || req.url === "/") {
+    process.stdout.write(`[health] check at ${ts}\n`);
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({
       status: "online",
