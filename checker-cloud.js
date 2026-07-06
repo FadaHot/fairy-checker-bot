@@ -524,16 +524,7 @@ async function main() {
   if (USE_WEBHOOK) {
     const ok = await setupWebhook();
     if (ok) {
-      const webhookPath = `/telegraf/${TOKEN}`;
-      server.webhookPath = webhookPath;
-      const secretPath = `/${TOKEN}`;
-      const cb = (req, res) => {
-        if (req.url === secretPath || req.url === webhookPath) {
-          bot.handleUpdate(JSON.parse(require("fs").readFileSync(0)));
-        } else {
-          res.writeHead(404).end();
-        }
-      };
+      const webhookPath = `/${TOKEN}`;
       server.removeAllListeners("request");
       server.on("request", (req, res) => {
         const ts = new Date().toISOString();
@@ -547,7 +538,7 @@ async function main() {
           }
           return;
         }
-        if (req.url === `/${TOKEN}`) {
+        if (req.method === "POST" && req.url === webhookPath) {
           let body = "";
           req.on("data", (chunk) => (body += chunk));
           req.on("end", () => {
@@ -560,9 +551,9 @@ async function main() {
               res.writeHead(400).end("bad request");
             }
           });
-        } else {
-          res.writeHead(404).end("not found");
+          return;
         }
+        res.writeHead(404).end("not found");
       });
       console.log("Webhook handler registrado no servidor HTTP.");
     } else {
