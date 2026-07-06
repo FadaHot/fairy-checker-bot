@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: fairy-checker-bot
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node checker-cloud.js
+    healthCheckPath: /health
+    envVars:
+      - key: CHECKER_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: CHECKER_GROUP_ID
+        sync: false
+      - key: ADMIN_PV_ID
+        sync: false
+      - key: ADMIN_TELEGRAM_ID
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: google/gemini-2.5-flash
+      - key: USE_WEBHOOK
+        value: "true"
+      - key: CHECKER_PIN
+        value: "true"
+      - key: NODE_VERSION
+        value: 20.11.0

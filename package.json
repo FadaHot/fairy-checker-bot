@@ -1,0 +1,27 @@
+{
+  "name": "fairy-telegram-bot",
+  "version": "1.0.0",
+  "description": "Auto-poster Telegram com legendas via OpenRouter",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "forward": "node forward.js",
+    "dev-forward": "node --watch forward.js",
+    "lembrete": "node lembrete-bot.js",
+    "dev-lembrete": "node --watch lembrete-bot.js",
+    "checker": "node checker-bot.js",
+    "dev-checker": "node --watch checker-bot.js",
+    "checker-cloud": "node checker-cloud.js",
+    "scheduler": "node scheduler.js",
+    "dev-scheduler": "node --watch scheduler.js",
+    "video-dash": "cd video-dash && node server.js"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.0",
+    "dotenv": "^16.4.0",
+    "node-cron": "^4.5.0",
+    "openai": "^4.75.0",
+    "telegraf": "^4.16.0"
+  }
+}

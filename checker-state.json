@@ -1,0 +1,64 @@
+{
+  "modelos": [
+    "Elza Chan",
+    "Melyssa"
+  ],
+  "pessoas": {
+    "Eduarda": {
+      "username_telegram": "@eduarda",
+      "tarefas_diarias": {
+        "posts_instagram": {
+          "label": "agendou os posts do Instagram (3 vídeos + 1 foto)",
+          "coberto_ate": null,
+          "ultimo_status": null,
+          "ultimo_check": null
+        },
+        "stories": {
+          "label": "agendou stories (CTA + humanização)",
+          "coberto_ate": null,
+          "ultimo_status": null,
+          "ultimo_check": null
+        }
+      }
+    },
+    "Yan": {
+      "username_telegram": "@yan",
+      "tarefas_semanais": {
+        "conteudo_mais18": {
+          "label": "agendou semana +18 (Privacy + Telegram VIP)",
+          "coberto_ate": null,
+          "ultimo_status": null,
+          "ultimo_check": null
+        },
+        "youtube": {
+          "label": "agendar YouTube (Elza + Melyssa)",
+          "coberto_ate": null,
+          "ultimo_status": null,
+          "ultimo_check": null
+        }
+      }
+    },
+    "Kinger": {
+      "username_telegram": "@kinger",
+      "tarefas_diarias": {
+        "previas_telegram": {
+          "label": "prévias Telegram prontas",
+          "coberto_ate": null,
+          "ultimo_status": null,
+          "ultimo_check": null
+        }
+      }
+    }
+  },
+  "tarefas_mensais": {
+    "contabilidade": {
+      "responsavel": "Ronald",
+      "username_telegram": "@ronald",
+      "label": "Contabilidade das modelos enviada no PV do gestor",
+      "prazo_dia": 5,
+      "ultimo_pagamento": null,
+      "ultimo_check_mes": null
+    }
+  },
+  "historico_mensagens": []
+}
