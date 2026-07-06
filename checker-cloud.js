@@ -544,19 +544,23 @@ async function main() {
           req.on("data", (chunk) => (body += chunk));
           req.on("end", () => {
             try {
-              console.log(`[webhook] body len=${body.length}`);
+              process.stdout.write(`[webhook] body len=${body.length}\n`);
               const update = JSON.parse(body);
+              const updateType = Object.keys(update).filter(k => k !== "update_id").join(",");
+              process.stdout.write(`[webhook] type=${updateType}\n`);
               if (update.message) {
-                console.log(`[webhook] msg de ${update.message.from?.first_name || "?"}: ${(update.message.text || "").substring(0, 50)}`);
+                process.stdout.write(`[webhook] msg de ${update.message.from?.first_name || "?"}: ${(update.message.text || "").substring(0, 50)}\n`);
+              } else if (update.edited_message) {
+                process.stdout.write(`[webhook] edit de ${update.edited_message.from?.first_name || "?"}: ${(update.edited_message.text || "").substring(0, 50)}\n`);
               } else if (update.callback_query) {
-                console.log(`[webhook] callback de ${update.callback_query.from?.first_name || "?"}`);
+                process.stdout.write(`[webhook] callback de ${update.callback_query.from?.first_name || "?"}\n`);
               } else {
-                console.log(`[webhook] update sem message: ${Object.keys(update).join(",")}`);
+                process.stdout.write(`[webhook] update sem message: ${Object.keys(update).join(",")}\n`);
               }
               bot.handleUpdate(update);
               res.writeHead(200).end("ok");
             } catch (e) {
-              console.error("Erro processando update:", e.message);
+              process.stdout.write(`Erro processando update: ${e.message}\n`);
               res.writeHead(400).end("bad request");
             }
           });
