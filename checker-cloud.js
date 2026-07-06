@@ -543,15 +543,24 @@ async function main() {
           req.on("data", (chunk) => (body += chunk));
           req.on("end", () => {
             try {
+              console.log(`[webhook] body len=${body.length}`);
               const update = JSON.parse(body);
               if (update.message) {
                 console.log(`[webhook] msg de ${update.message.from?.first_name || "?"}: ${(update.message.text || "").substring(0, 50)}`);
               } else if (update.callback_query) {
                 console.log(`[webhook] callback de ${update.callback_query.from?.first_name || "?"}`);
+              } else {
+                console.log(`[webhook] update sem message: ${Object.keys(update).join(",")}`);
               }
               bot.handleUpdate(update);
               res.writeHead(200).end("ok");
             } catch (e) {
+              console.error("Erro processando update:", e.message);
+              res.writeHead(400).end("bad request");
+            }
+          });
+          return;
+        }
               console.error("Erro processando update:", e.message);
               res.writeHead(400).end("bad request");
             }
