@@ -30,19 +30,40 @@ const bot = new Telegraf(TOKEN);
 const ai = OPENROUTER_KEY ? new OpenAI({ baseURL: "https://openrouter.ai/api/v1", apiKey: OPENROUTER_KEY }) : null;
 
 const STATE_FILE = path.join(__dirname, "checker-state.json");
+let stateCache = null;
+let stateDirty = false;
 
 function loadState() {
+  if (stateCache) return stateCache;
   try {
-    return JSON.parse(fs.readFileSync(STATE_FILE, "utf-8"));
+    stateCache = JSON.parse(fs.readFileSync(STATE_FILE, "utf-8"));
   } catch (e) {
-    console.error("Erro lendo checker-state.json:", e.message);
-    return null;
+    console.error("Erro lendo state:", e.message);
+    stateCache = { pessoas: {}, tarefas_mensais: { contabilidade: {} }, historico_mensagens: [] };
+  }
+  if (!stateCache.historico_mensagens) stateCache.historico_mensagens = [];
+  return stateCache;
+}
+
+function saveStateNow() {
+  if (!stateCache) return;
+  try {
+    if (stateCache.historico_mensagens.length > 50) {
+      stateCache.historico_mensagens = stateCache.historico_mensagens.slice(-30);
+    }
+    fs.writeFileSync(STATE_FILE, JSON.stringify(stateCache, null, 2), "utf-8");
+    stateDirty = false;
+  } catch (e) {
+    console.error("Erro salvando state:", e.message);
   }
 }
 
-function saveState(state) {
-  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), "utf-8");
+function saveState() {
+  stateDirty = true;
+  saveStateNow();
 }
+
+setInterval(() => { if (stateDirty) saveStateNow(); }, 30000);
 
 function hojeISO() {
   return new Date().toISOString().slice(0, 10);
@@ -291,6 +312,22 @@ bot.on("message", async (ctx) => {
   try { await desfixar(replyId); } catch {}
 });
 
+bot.start((ctx) => {
+  const texto = `Ola! Sou o bot de checagem da Fairy AGC.
+
+Comandos:
+/status - ver cobertura de tarefas
+/forcar - disparar checagens agora
+/cobertura Pessoa N - marcar cobertura
+/tarefas - listar tarefas
+/reset - resetar tudo
+/id - ver ID deste chat
+
+Opero no grupo: ${CHECKER_GROUP_ID || "(nao configurado)"}
+Horario das checagens: 8h, 11h55, 15h55, 19h55.`;
+  ctx.reply(texto);
+});
+
 bot.command("id", (ctx) => {
   ctx.reply(`Chat ID: \`${ctx.chat.id}\``, { parse_mode: "MarkdownV2" });
 });
@@ -397,8 +434,7 @@ bot.command("contabilidade_feita", async (ctx) => {
 });
 
 bot.command("teste", async (ctx) => {
-  if (ADMIN_TELEGRAM_ID && ctx.from.id !== ADMIN_TELEGRAM_ID) return;
-  await ctx.reply("Checker-cloud ativo.\n\nCrons:\n- 08:00, 11:55, 15:55, 19:55: tarefas diarias\n- 09:00 segunda: tarefas semanais (Yan)\n- 09:00 dia 1: contabilidade mensal\n\nComandos: /status, /cobertura, /forcar, /tarefas, /reset, /contabilidade_feita");
+  await ctx.reply(`Bot ativo. Uptime: ${Math.floor(process.uptime())}s. /start para ajuda.`);
 });
 
 cron.schedule("0 8 * * *", () => checarTarefasDiarias());
@@ -419,7 +455,6 @@ const server = http.createServer((req, res) => {
       uptime: process.uptime(),
       timestamp: ts,
     }));
-    console.log(`[health] ${ts} GET ${req.url} from ${req.socket.remoteAddress}`);
     return;
   }
 
@@ -465,7 +500,6 @@ function selfKeepAlive() {
       const url = new URL(selfUrl);
       const opts = { hostname: url.hostname, path: "/health", method: "GET", port: 443, timeout: 5000 };
       const req = https.request(opts, (res) => {
-        console.log(`[keepalive] ping OK status=${res.statusCode}`);
         res.on("data", () => {});
         res.on("end", () => {});
       });
