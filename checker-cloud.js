@@ -524,7 +524,7 @@ async function main() {
   if (USE_WEBHOOK) {
     const ok = await setupWebhook();
     if (ok) {
-      const webhookPath = `/${TOKEN}`;
+      const webhookPath = `/telegraf/${TOKEN}`;
       server.removeAllListeners("request");
       server.on("request", (req, res) => {
         const ts = new Date().toISOString();
